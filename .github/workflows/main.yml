@@ -63,7 +63,7 @@ jobs:
       run: git submodule update --init --recursive
     
     - name: Configure project for 64-bit Windows
-      run: build_binary_x86.bat 64 nogpu no-intel no-openni nodoc package build
+      run: Build_Binary_x86-64_doc.bat
       shell: cmd
       working-directory: platforms/windows
     
@@ -82,20 +82,19 @@ jobs:
       with:
         dotnet-version: 2.2.108
     
-    - name: Create NuGet package
-      run: dotnet pack Solution/Windows.Desktop/Emgu.CV.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -o nupkgs
+    - name: Build Emgucv.sln
+      run: dotnet build b/emgucv.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
     
-    - name: Upload NuGet package artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: EmguCV-drop
-        path: nupkgs
+    - name: Build Emgu.CV.runtime.windows.nuget.sln
+      run: dotnet build Emgu.CV.runtime.windows.nuget.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      working-directory: b/platforms/nuget/Emgu.CV.runtime.windows
     
-    - name: Create NuGet symbols package
-      run: dotnet pack Solution/Windows.Desktop/Emgu.CV.sln -c Debug -p:Version=${{ steps.gitversion.outputs.assemblySemVer }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} --include-source --include-symbols -o nupkgs-dbg
+    - name: Build Emgu.CV.nuget.sln
+      run: dotnet build Emgu.CV.nuget.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      working-directory: b/platforms/nuget/Emgu.CV
     
-    - name: Upload NuGet symbols package artifact
+    - name: Upload NuGet packages artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: EmguCV-dbg-drop
-        path: nupkgs-dbg
+        path: platforms/nuget
