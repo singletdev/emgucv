@@ -95,6 +95,7 @@ jobs:
     - name: Build Emgucv.sln
       #run: msbuild -t:build -restore emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
       run: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\devenv.exe" emgucv.sln /build "Release|x64"'
+      shell: cmd
       working-directory: b
     
     - name: Build Emgu.CV.runtime.windows.nuget.sln
