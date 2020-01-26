@@ -82,18 +82,18 @@ jobs:
     #  with:
     #    dotnet-version: 2.2.108
     
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.2
-      
-    - name: Restore NuGet packages
-      run: nuget restore emgucv.sln
-      working-directory: b
+    #- name: Setup NuGet.exe for use with actions
+    #  uses: NuGet/setup-nuget@v1.0.2
+    #  
+    #- name: Restore NuGet packages
+    #  run: nuget restore emgucv.sln
+    #  working-directory: b
     
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
     
     - name: Build Emgucv.sln
-      run: msbuild emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      run: msbuild -t:build -restore emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
       working-directory: b
     
     - name: Build Emgu.CV.runtime.windows.nuget.sln
