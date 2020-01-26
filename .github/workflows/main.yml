@@ -77,20 +77,24 @@ jobs:
         name: EmguCV-folder-structure
         path: folder_structure.txt
     
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.2.108
+    #- name: Setup .NET Core
+    #  uses: actions/setup-dotnet@v1
+    #  with:
+    #    dotnet-version: 2.2.108
+    
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
     
     - name: Build Emgucv.sln
-      run: dotnet build b/emgucv.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      run: msbuild emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      working-directory: b
     
     - name: Build Emgu.CV.runtime.windows.nuget.sln
-      run: dotnet build Emgu.CV.runtime.windows.nuget.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      run: msbuild Emgu.CV.runtime.windows.nuget.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
       working-directory: b/platforms/nuget/Emgu.CV.runtime.windows
     
     - name: Build Emgu.CV.nuget.sln
-      run: dotnet build Emgu.CV.nuget.sln -c Release -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      run: msbuild Emgu.CV.nuget.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
       working-directory: b/platforms/nuget/Emgu.CV
     
     - name: Upload NuGet packages artifact
