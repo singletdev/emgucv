@@ -82,6 +82,13 @@ jobs:
     #  with:
     #    dotnet-version: 2.2.108
     
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.2
+      
+    - name: Restore NuGet packages
+      run: nuget restore emgucv.sln
+      working-directory: b
+    
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
     
