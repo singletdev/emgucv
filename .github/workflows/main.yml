@@ -89,11 +89,12 @@ jobs:
     #  run: nuget restore emgucv.sln
     #  working-directory: b
     
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
+    #- name: Setup MSBuild.exe
+    #  uses: warrenbuckley/Setup-MSBuild@v1
     
     - name: Build Emgucv.sln
-      run: msbuild -t:build -restore emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      #run: msbuild -t:build -restore emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+      run: devenv emgucv.sln /build "Release|x64"
       working-directory: b
     
     - name: Build Emgu.CV.runtime.windows.nuget.sln
