@@ -62,20 +62,15 @@ jobs:
     - name: Clone submodules
       run: git submodule update --init --recursive
     
-    - name: Configure project for 64-bit Windows
-      run: Build_Binary_x86-64_doc.bat
-      shell: cmd
-      working-directory: platforms/windows
+    # - name: Print folder structure
+    #   run: ls -r > folder_structure.txt
+    #   shell: pwsh
     
-    - name: Print folder structure
-      run: ls -r > folder_structure.txt
-      shell: pwsh
-    
-    - name: Upload Folder structure artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: EmguCV-folder-structure
-        path: folder_structure.txt
+    #- name: Upload Folder structure artifact
+    #  uses: actions/upload-artifact@v1.0.0
+    #  with:
+    #    name: EmguCV-folder-structure
+    #    path: folder_structure.txt
     
     #- name: Setup .NET Core
     #  uses: actions/setup-dotnet@v1
@@ -92,42 +87,62 @@ jobs:
     #- name: Setup MSBuild.exe
     #  uses: warrenbuckley/Setup-MSBuild@v1
     
-    - name: Build Emgucv.sln
-      #run: msbuild -t:build -restore emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
-      run: "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe\" emgucv.sln /build \"Release|x64\" /log emgucv_vsbuild_log.txt"
+    #- name: Build Emgucv.sln
+    #  #run: msbuild -t:build -restore emgucv.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+    #  run: "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe\" emgucv.sln /build \"Release|x64\" /log emgucv_vsbuild_log.txt"
+    #  shell: cmd
+    #  working-directory: b
+        
+    - name: Run Build_Binary_x86
+      run: Build_Binary_x86.bat 32 nogpu no-intel no-openni no-doc package build
       shell: cmd
-      working-directory: b
-    
-    - name: Upload Emgucv VSBuild Log artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: Emgucv-vsbuild-log-file
-        path: b/emgucv_vsbuild_log.txt
-    
-    - name: Build Emgu.CV.runtime.windows.nuget.sln
-      #run: msbuild Emgu.CV.runtime.windows.nuget.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
-      run: "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe\" Emgu.CV.runtime.windows.nuget.sln /build \"Release|x64\" /log emgucv_runtime_windows_nuget_vsbuild_log.txt"
-      working-directory: b/platforms/nuget/Emgu.CV.runtime.windows
+      working-directory: platforms/windows
+      
+    - name: Delete b folder
+      run: rd /s /q b/
+      shell: cmd
 
-    - name: Upload Emgucv Runtime Windows VSBuild Log artifact
+    - name: Run Build_Binary_x84 64 nuget
+      run: Build_Binary_x86.bat 64 nogpu no-intel no-openni htmldoc package build nuget
+      shell: cmd
+      working-directory: platforms/windows
+
+    - name: Upload Emgu.CV nupkg
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: Emgucv-runtime-windows-vsbuild-log-file
-        path: b/platforms/nuget/Emgu.CV.runtime.windows/emgucv_runtime_windows_nuget_vsbuild_log.txt
+        name: Emgu.CV.4.2.0.nupkg
+        path: platforms/nuget/Emgu.CV.4.2.0.nupkg
 
-    - name: Build Emgu.CV.nuget.sln
-      #run: msbuild Emgu.CV.nuget.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
-      run: "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe\" Emgu.CV.nuget.sln /build \"Release|x64\" /log emgucv_nuget_vsbuild_log.txt"
-      working-directory: b/platforms/nuget/Emgu.CV
+    - name: Upload Emgu.CV.runtime.windows nupkg
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: Emgu.CV.runtime.windows.4.2.0.nupkg
+        path: platforms/nuget/Emgu.CV.runtime.windows.4.2.0.nupkg
+
+    #- name: Build Emgu.CV.runtime.windows.nuget.sln
+    #  #run: msbuild Emgu.CV.runtime.windows.nuget.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+    #  run: "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe\" Emgu.CV.runtime.windows.nuget.sln /build \"Release|x64\" /log emgucv_runtime_windows_nuget_vsbuild_log.txt"
+    #  working-directory: b/platforms/nuget/Emgu.CV.runtime.windows
+
+    #- name: Upload Emgucv Runtime Windows VSBuild Log artifact
+    #  uses: actions/upload-artifact@v1.0.0
+    #  with:
+    #    name: Emgucv-runtime-windows-vsbuild-log-file
+    #    path: b/platforms/nuget/Emgu.CV.runtime.windows/emgucv_runtime_windows_nuget_vsbuild_log.txt
+
+    #- name: Build Emgu.CV.nuget.sln
+    #  #run: msbuild Emgu.CV.nuget.sln /p:Configuration=Release /p:Platform="x64" /p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+    #  run: "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe\" Emgu.CV.nuget.sln /build \"Release|x64\" /log emgucv_nuget_vsbuild_log.txt"
+    #  working-directory: b/platforms/nuget/Emgu.CV
     
-    - name: Upload Emgucv Nuget VSBuild Log artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: Emgucv-nuget-vsbuild-log-file
-        path: b/platforms/nuget/Emgu.CV/emgucv_nuget_vsbuild_log.txt
+    #- name: Upload Emgucv Nuget VSBuild Log artifact
+    #  uses: actions/upload-artifact@v1.0.0
+    #  with:
+    #    name: Emgucv-nuget-vsbuild-log-file
+    #    path: b/platforms/nuget/Emgu.CV/emgucv_nuget_vsbuild_log.txt
 
-    - name: Upload NuGet packages artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: EmguCV-dbg-drop
-        path: platforms/nuget
+    #- name: Upload NuGet packages artifact
+    #  uses: actions/upload-artifact@v1.0.0
+    #  with:
+    #    name: EmguCV-dbg-drop
+    #    path: platforms/nuget
