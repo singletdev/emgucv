@@ -98,6 +98,12 @@ jobs:
       shell: cmd
       working-directory: platforms/windows
       
+    - name: Upload NSIS Output log artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: NSISOutput.log
+        path: b/_CPack_Packages/win32/NSIS/NSISOutput.log
+    
     - name: Delete b folder
       run: rd /s /q b/
       shell: cmd
