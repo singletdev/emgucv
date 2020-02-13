@@ -96,6 +96,7 @@ jobs:
     - name: Run Build_Binary_x86
       run: Build_Binary_x86.bat 32 nogpu no-intel no-openni no-doc package build
       shell: cmd
+      continue-on-error: true
       working-directory: platforms/windows
       
     - name: Upload NSIS Output log artifact
